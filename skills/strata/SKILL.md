@@ -1,13 +1,12 @@
 ---
 name: strata
-description: Explore Strata markets and request validated Sonar quotes through the official MCP server or terminal SDK. Use when an agent needs to inspect live Strata capabilities, discover quote-ready markets, compare buy or sell economics, reason about token-atomic amounts, or explain a Sonar quote without exposing private liquidity or matching composition.
+description: Explore Strata markets and request validated Sonar quotes through the official MCP server or terminal SDK. Use when an agent needs to inspect live Strata capabilities, discover quote-ready markets, compare buy or sell economics, work with token-atomic amounts, or explain Sonar quote fields and availability.
 ---
 
 # Strata
 
-Use Strata's public, capability-driven interfaces to inspect markets and request
-read-only Sonar quotes. Treat Sonar as the product-level liquidity and matching
-system; never infer or reveal its internal composition.
+Use Strata's official interfaces to inspect markets and request read-only Sonar
+quotes. Sonar is Strata's unified liquidity and matching system.
 
 ## Choose an interface
 
@@ -34,9 +33,9 @@ Preserve every atomic amount as a base-10 string.
 
 ## Interpret safely
 
-- Describe the result as a Sonar quote across the complete eligible market.
-- Do not speculate about routes, venues, liquidity layers, matching order, or
-  private infrastructure.
+- Describe the response as one unified Sonar quote.
+- Base explanations on the returned quote fields; do not invent a breakdown
+  that is not present.
 - Treat expiry and minimum output as hard constraints.
 - Treat a disabled capability, unavailable market, contract mismatch, or expired
   quote as a stop condition.

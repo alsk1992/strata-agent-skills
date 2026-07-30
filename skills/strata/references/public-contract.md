@@ -61,8 +61,8 @@ through floating point.
 - Request a new quote after expiry; never extend an old quote locally.
 - Stop on unknown fields, unsupported contract versions, binding mismatches, or
   inconsistent economics.
-- Explain that Sonar composition is deliberately opaque when asked for private
-  route or liquidity details.
+- If a requested breakdown is not present, explain that the response is a
+  unified Sonar quote and report the published economic fields instead.
 
 ## Safety boundary
 
