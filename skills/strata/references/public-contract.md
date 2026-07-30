@@ -5,7 +5,7 @@
 - Hosted MCP: `https://api.stratabook.app/mcp`
 - TypeScript and terminal package: `@stratabook/sdk`
 - Rust crates: `strata-public-contract`, `strata-sdk`, `strata-agent-cli`
-- Product documentation: `https://stratabook.app/docs/hello-agents`
+- Product documentation: `https://stratabook.org/docs/hello-agents`
 
 Prefer MCP for an interactive agent, the terminal for scripts and exploration,
 and a language SDK for application code. All interfaces consume the same
