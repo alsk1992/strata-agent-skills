@@ -1,0 +1,11 @@
+interface:
+  display_name: "Strata"
+  short_description: "Explore markets and request Sonar quotes"
+  default_prompt: "Use $strata to inspect available markets and request a validated Sonar quote."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "strata"
+      description: "Official read-only Strata and Sonar MCP server"
+      transport: "streamable_http"
+      url: "https://api.stratabook.app/mcp"
