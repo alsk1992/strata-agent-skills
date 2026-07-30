@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://stratabook.app/docs/hello-agents">Documentation</a>
+  <a href="https://stratabook.org/docs/hello-agents">Documentation</a>
   ·
   <a href="https://github.com/alsk1992/strata-mcp">MCP</a>
   ·
@@ -87,7 +87,7 @@ The result is less prompt engineering and fewer silent financial assumptions.
 | [Strata MCP](https://github.com/alsk1992/strata-mcp) | Interactive agent access to live markets and Sonar |
 | [TypeScript SDK](https://github.com/alsk1992/strata-sdk-ts) | Applications, browser code, scripts, and the `strata` CLI |
 | [Rust SDK](https://github.com/alsk1992/strata-sdk-rs) | Native services and the `strata-agent` CLI |
-| [Strata documentation](https://stratabook.app/docs/hello-agents) | Product concepts and supported workflows |
+| [Strata documentation](https://stratabook.org/docs/hello-agents) | Product concepts and supported workflows |
 
 ## What gets installed
 
@@ -141,7 +141,7 @@ a transaction.
 
 ## Resources
 
-- [Agent quick start](https://stratabook.app/docs/hello-agents)
+- [Agent quick start](https://stratabook.org/docs/hello-agents)
 - [Strata MCP](https://github.com/alsk1992/strata-mcp)
 - [Issues and feature requests](https://github.com/alsk1992/strata-agent-skills/issues)
 - [Security policy](SECURITY.md)
