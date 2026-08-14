@@ -1,35 +1,57 @@
 ---
 name: strata
-description: Explore Strata markets and request validated Sonar quotes through the official MCP server or terminal SDK. Use when an agent needs to inspect live Strata capabilities, discover quote-ready markets, compare buy or sell economics, work with token-atomic amounts, or explain Sonar quote fields and availability.
+description: Discover and use Strata's capability-gated market, Sonar quote, account, execution, and persistent order-command interfaces. Use when an agent needs live market data, exact trade economics, externally signed operations, safe resting-order automation, dead-man cancellation, or order-stream latency certification.
 ---
 
 # Strata
 
-Use Strata's official interfaces to inspect markets and request read-only Sonar
-quotes. Sonar is Strata's unified liquidity and matching system.
+Use Strata's official interfaces to discover live capabilities, inspect markets,
+request Sonar quotes, and—when the external agent owner has configured signer
+authority—prepare and submit externally signed operations.
 
 ## Choose an interface
 
-1. Prefer the configured Strata MCP tools.
-2. Otherwise use `npx -y @stratabook/sdk` from a terminal.
-3. Use a language SDK only when writing or changing application code.
+1. Prefer the configured Strata MCP tools for discovery and interactive work.
+2. Use `npx -y @stratabook/sdk` for terminal discovery and non-trading checks.
+3. Use the TypeScript or Rust SDK for persistent market, account, or order-command streams.
 
 Do not call undocumented HTTP paths or reconstruct private behavior.
 
-## Request a quote
+## Enter through discovery
 
-1. Read capabilities first. Proceed only when the required public read
-   capability is currently enabled.
-2. List markets and select a market marked ready.
-3. Resolve the side, exact input amount in token atoms, and slippage tolerance.
-   Ask the user when any of these are ambiguous.
-4. Request the Sonar quote.
-5. Check that the response binds to the selected market, side, and input amount.
-6. Report output atoms, consumed input atoms, fees by asset side, minimum output,
+1. Read live capabilities before every objective.
+2. Read the executable action graph and follow only edges whose required live
+   capabilities are enabled.
+3. List markets and select an opaque market ID marked ready.
+4. Resolve the exact side, atomic amount, tolerance, and owner-configured signer
+   authority. Ask when an economically meaningful input is ambiguous.
+5. Request a fresh Sonar quote and verify its market, side, input, fees, minimum
+   output, server time, and expiry.
+6. Report consumed input, expected and minimum output, fees by asset side,
    price impact, and remaining validity.
 
 Never silently convert a human token amount without confirmed token decimals.
 Preserve every atomic amount as a base-10 string.
+
+## Execute when available
+
+- Treat preparation and submission as separate live capabilities. Package
+  support or an earlier session never enables an operation.
+- Keep all signing external to Strata. Request canonical authorization bytes,
+  have the owner-configured signer sign them, verify the prepared transaction,
+  and submit with a stable idempotency key.
+- For resting orders, select an explicit self-trade prevention policy. Never
+  infer one and never accept a mode that permits a self-fill.
+- Prefer the official persistent order-command client for latency-sensitive
+  place, cancel, cancel-all, replace, and batch operations when WebSocket
+  transport is advertised.
+- Treat placement success as RPC broadcast only. Consume the pushed terminal
+  status or recover it durably before claiming completion.
+- Before leaving resting exposure unattended, arm an exact externally verified
+  and pre-signed cancel-all ticket and maintain its SDK heartbeat. Lost
+  heartbeats must fail closed into cancellation; disarm only through an
+  explicit owner-authorized operation.
+- Run the non-trading `order-slo` certification before making latency claims.
 
 ## Interpret safely
 
@@ -39,10 +61,11 @@ Preserve every atomic amount as a base-10 string.
 - Treat expiry and minimum output as hard constraints.
 - Treat a disabled capability, unavailable market, contract mismatch, or expired
   quote as a stop condition.
-- Never request or accept a wallet, private key, keypair, seed phrase, session
-  key, or production credential.
-- Never claim that this read-only release prepared, signed, or submitted a
-  transaction.
+- Recover any stream sequence gap from a fresh snapshot or durable status read.
+- Never request or accept a private key, keypair, seed phrase, session secret,
+  or production credential in a prompt.
+- Never claim chain completion from preparation, signing, or the immediate
+  broadcast receipt.
 
 Read [references/public-contract.md](references/public-contract.md) when exact
 field semantics, terminal commands, errors, or interface selection matter.

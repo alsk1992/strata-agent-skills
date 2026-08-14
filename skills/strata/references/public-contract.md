@@ -16,22 +16,34 @@ versioned public contract.
 Use the available Strata tools in this order:
 
 1. `strata_capabilities`
-2. `strata_markets`
-3. `strata_quote`
+2. `strata_action_graph`
+3. `strata_markets`
+4. `strata_quote`
 
 The tool list follows live capability policy. Never assume a tool remains
-available because it appeared earlier in a session.
+available because it appeared earlier in a session. Read
+`strata_action_graph` after capabilities to discover permitted transitions.
 
 ## Terminal workflow
 
 ```sh
 npx -y @stratabook/sdk capabilities --json
+npx -y @stratabook/sdk action-graph --json
 npx -y @stratabook/sdk markets --json
 npx -y @stratabook/sdk quote \
   --market SOL/USDC \
   --side sell \
   --amount-atoms 10000000 \
   --slippage-bps 50 \
+  --json
+```
+
+For a non-trading production latency certificate:
+
+```sh
+npx -y @stratabook/sdk order-slo \
+  --market-id MARKET_ID \
+  --owner-wallet OWNER_PUBLIC_KEY \
   --json
 ```
 
@@ -64,8 +76,29 @@ through floating point.
 - If a requested breakdown is not present, explain that the response is a
   unified Sonar quote and report the published economic fields instead.
 
-## Safety boundary
+## Account and execution
 
-The `0.1.x` tools are read-only. They discover capabilities, list markets, and
-request quotes. They do not prepare, sign, or submit transactions and do not
-accept wallet material.
+- `account.read` requires an external signature over the exact wallet, opaque
+  market, request time, and fill limit. Replace local state from a fresh signed
+  snapshot after a sequence gap.
+- Execution prepare and submit are independently gated. A prepared transaction
+  must preserve the selected quote or exact opaque order set and be verified
+  before external signing.
+- Submission is idempotent. The immediate receipt means RPC broadcast, not
+  terminal chain completion.
+- Persistent order commands use an authenticated SDK WebSocket connection with
+  contiguous sequences and correlated request IDs. Terminal status is pushed
+  after broadcast and remains durably queryable.
+- Every resting order selects `cancel_taker`, `cancel_maker`, `cancel_both`, or
+  `skip_own_liquidity`; none permits a self-fill.
+- A dead-man ticket is a pre-signed cancel-all whose durable deadline is
+  extended only by authenticated heartbeats. Dropping the guard leaves it
+  armed; explicit owner authorization is required to disarm it.
+
+## Authority and safety boundary
+
+The external agent owner controls permissions and signer authority. Strata
+exposes capability-gated operations, verifies signatures and immutable
+bindings, and never receives private keys. Do not call a write operation unless
+its live capability is enabled and the configured signer is authorized for the
+exact operation.
