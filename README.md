@@ -19,9 +19,10 @@
 </p>
 
 The Strata skill teaches coding agents how to discover markets, request Sonar
-quotes, preserve exact token amounts, and choose the right interface for the
-job. It is portable across Codex, Claude Code, Cursor, OpenCode, and other tools
-that support the open Agent Skills format.
+quotes, preserve exact token amounts, and—when their owner configures signing
+authority—use capability-gated execution and persistent order commands safely.
+It is portable across Codex, Claude Code, Cursor, OpenCode, and other tools that
+support the open Agent Skills format.
 
 ## Install in one command
 
@@ -76,6 +77,8 @@ npx -y @stratabook/sdk quote \
 | Explain the result | Report consumed input, output, fees, minimum output, impact, and expiry |
 | Handle a human amount | Confirm token decimals before converting to atomic units |
 | Reuse an old quote | Stop at expiry and request a fresh result |
+| Automate resting orders | Use explicit self-trade prevention and a durable dead-man guard |
+| Claim low latency | Run the non-trading order-stream SLO certificate first |
 | Write integration code | Choose MCP, terminal, TypeScript, or Rust for the actual job |
 
 The result is less prompt engineering and fewer silent financial assumptions.
@@ -135,9 +138,11 @@ project skills folder instead.
 
 ## Current release
 
-The skill covers market discovery and read-only Sonar quotes. It will not ask
-for wallet or private-key material and will not claim a quote was submitted as
-a transaction.
+The skill covers live capability and action-graph discovery, market and account
+reads, Sonar quotes, externally signed execution, persistent order commands,
+self-trade prevention, dead-man cancellation, and non-trading latency
+certification. It never asks for private-key material and never mistakes an
+immediate broadcast receipt for terminal chain completion.
 
 ## Resources
 
