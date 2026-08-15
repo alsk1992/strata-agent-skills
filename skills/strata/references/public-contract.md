@@ -89,6 +89,15 @@ through floating point.
 - Persistent order commands use an authenticated SDK WebSocket connection with
   contiguous sequences and correlated request IDs. Terminal status is pushed
   after broadcast and remains durably queryable.
+- Both SDKs automatically coalesce concurrent commands into bounded frames and
+  negotiate compact bounded result frames. Every command still has an
+  independent request ID and sequence; batching never changes signing,
+  ordering, idempotency, or receipt semantics.
+- `probe(nonce)` is an authenticated non-trading round trip. It only echoes the
+  validated nonce and cannot prepare, sign, submit, cancel, or mutate an order.
+  The `order-slo` terminal uses it to gate authentication p99, controlled-load
+  command p50/p95/p99, at least 25,000 commands/second under saturation, zero
+  sequence faults, and bounded error rate.
 - Every resting order selects `cancel_taker`, `cancel_maker`, `cancel_both`, or
   `skip_own_liquidity`; none permits a self-fill.
 - A dead-man ticket is a pre-signed cancel-all whose durable deadline is

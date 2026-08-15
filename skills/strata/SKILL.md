@@ -12,7 +12,8 @@ authority—prepare and submit externally signed operations.
 ## Choose an interface
 
 1. Prefer the configured Strata MCP tools for discovery and interactive work.
-2. Use `npx -y @stratabook/sdk` for terminal discovery and non-trading checks.
+2. Use `npx -y @stratabook/sdk` for terminal discovery, scripted action
+   primitives, and non-trading certification.
 3. Use the TypeScript or Rust SDK for persistent market, account, or order-command streams.
 
 Do not call undocumented HTTP paths or reconstruct private behavior.
@@ -52,6 +53,12 @@ Preserve every atomic amount as a base-10 string.
   heartbeats must fail closed into cancellation; disarm only through an
   explicit owner-authorized operation.
 - Run the non-trading `order-slo` certification before making latency claims.
+  It uses an authenticated nonce echo that cannot prepare, sign, submit, or
+  cancel an order. Require both the controlled-latency and saturated-capacity
+  gates to pass.
+- Let the official SDK batch concurrent command and result frames. Agent code
+  keeps calling the ordinary command methods; do not construct transport
+  batches or infer shared results.
 
 ## Interpret safely
 
