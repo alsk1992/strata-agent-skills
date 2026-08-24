@@ -1,7 +1,7 @@
 interface:
   display_name: "Strata"
-  short_description: "Discover markets and execute signed actions"
-  default_prompt: "Use $strata to discover a live market, validate a Sonar quote, and follow the capability-gated action path."
+  short_description: "Trade, automate makers, and inspect markets"
+  default_prompt: "Use $strata to discover the live capabilities and safely complete this trading or market-making objective."
 dependencies:
   tools:
     - type: "mcp"

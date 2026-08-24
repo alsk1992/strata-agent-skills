@@ -17,12 +17,52 @@ Use the available Strata tools in this order:
 
 1. `strata_capabilities`
 2. `strata_action_graph`
-3. `strata_markets`
-4. `strata_quote`
+3. `strata_platform_graph`
+4. `strata_status`
+5. `strata_markets`
+6. The task-specific read or prepare tool
 
 The tool list follows live capability policy. Never assume a tool remains
 available because it appeared earlier in a session. Read
 `strata_action_graph` after capabilities to discover permitted transitions.
+
+## Market-making workflow
+
+For the ordinary path:
+
+1. Read `strata_market_making_status` and
+   `strata_market_making_reputation` for the maker public key and market.
+2. Call `strata_market_making_prepare` with `action: "start"`, the market
+   label, `product: "strand"` or `"current"`, maker public key, spread bps,
+   decimal base size such as `0.01 SOL`, and duration.
+3. Verify and externally sign only `prepared.transaction_base64`.
+4. Call `strata_market_making_submit_and_wait` with the maker control ID, the
+   signed transaction, and the unchanged `preparationToken`.
+5. Accept success only when the call returns matching chain-derived maker
+   state. Stop through the same pair with `action: "stop"`.
+
+The preparation token contains no signing authority. It carries the strictly
+validated public preparation across separate hosted HTTP requests or a process
+restart; the external wallet signature and byte-exact verifier remain the
+authority boundary. Never reconstruct or modify the token.
+
+The high-level path resolves public IDs, token decimals, the fresh Strata mark,
+tick math, fixed arrays, expiry, and bounded defaults. Current follows Strata's
+live mark and needs no separate oracle publisher transaction. Use the
+product-specific Strand/Current tools only when the strategy intentionally
+manages every low-level field.
+
+TypeScript exposes `marketMaking.start(...)`, `stop(...)`, `prepareStart(...)`,
+`prepareStop(...)`, and `submitPrepared(...)`. Rust exposes
+`platform_maker_start(...)`, `platform_maker_stop(...)`,
+`platform_maker_quickstart_prepare(...)`, and
+`platform_maker_submit_prepared(...)`.
+
+For collateral, initialize the market Vault if needed, activate the Strand or
+Current, then deposit exact atoms with the public Vault prepare/submit flow.
+Collateral stays assigned while any control remains live and returns to the
+canonical Vault balance only after chain state observes the last control as
+disabled, exhausted, expired, or cancelled.
 
 ## Terminal workflow
 

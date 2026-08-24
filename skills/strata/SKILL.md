@@ -1,6 +1,6 @@
 ---
 name: strata
-description: Discover and use Strata's capability-gated market, Sonar quote, account, execution, and persistent order-command interfaces. Use when an agent needs live market data, exact trade economics, externally signed operations, safe resting-order automation, dead-man cancellation, or order-stream latency certification.
+description: Discover and use Strata's capability-gated market, Sonar quote, account, execution, market-making, and persistent order-command interfaces. Use when an agent needs live market data, exact trade economics, externally signed operations, Strand or Current liquidity, maker funding and monitoring, safe resting-order automation, dead-man cancellation, or order-stream latency certification.
 ---
 
 # Strata
@@ -14,7 +14,8 @@ authority—prepare and submit externally signed operations.
 1. Prefer the configured Strata MCP tools for discovery and interactive work.
 2. Use `npx -y @stratabook/sdk` for terminal discovery, scripted action
    primitives, and non-trading certification.
-3. Use the TypeScript or Rust SDK for persistent market, account, or order-command streams.
+3. Use the TypeScript or Rust SDK for persistent market, account, maker, or
+   order-command streams.
 
 Do not call undocumented HTTP paths or reconstruct private behavior.
 
@@ -60,6 +61,29 @@ Preserve every atomic amount as a base-10 string.
   keeps calling the ordinary command methods; do not construct transport
   batches or infer shared results.
 
+## Run market making when available
+
+- Read the wallet's maker status and reputation before changing liquidity.
+- Prefer `strata_market_making_prepare` for ordinary Strand or Current work.
+  Pass the market label, product, maker public key, spread, decimal base size,
+  duration, and any intentional level settings. Do not hand-build atoms or
+  fixed arrays for this path.
+- Verify and externally sign only `prepared.transaction_base64`. Pass the
+  returned `preparationToken` unchanged with the signed transaction to
+  `strata_market_making_submit_and_wait`. The token has no signing authority
+  and keeps the continuation valid across stateless MCP requests and restarts.
+- Use the product-specific low-level tools only when the strategy deliberately
+  controls every array and safety field. A Current follows Strata's live mark;
+  do not invent a separate oracle publisher or publisher transaction.
+- Initialize the market Vault when needed, activate the maker product, and
+  deposit exact collateral through the public Vault tools. Treat collateral as
+  locked while a control is live. Claim start, stop, expiry, or release only
+  after chain-derived maker status confirms it.
+- In TypeScript, prefer `marketMaking.start(...)` / `stop(...)`; in Rust,
+  prefer `platform_maker_start(...)` / `platform_maker_stop(...)`. Both keep
+  signing external, verify exact transaction bytes, submit idempotently, and
+  wait for chain-derived state.
+
 ## Interpret safely
 
 - Describe the response as one unified Sonar quote.
@@ -73,6 +97,8 @@ Preserve every atomic amount as a base-10 string.
   or production credential in a prompt.
 - Never claim chain completion from preparation, signing, or the immediate
   broadcast receipt.
+- Never claim maker activation or collateral release from preparation or RPC
+  broadcast; reconcile the returned chain-derived maker status.
 
 Read [references/public-contract.md](references/public-contract.md) when exact
 field semantics, terminal commands, errors, or interface selection matter.
